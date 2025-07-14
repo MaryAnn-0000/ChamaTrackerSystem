@@ -1,26 +1,39 @@
 package ChamaTracker;
 
-public class Member {
+import java.util.*;
+import java.time.LocalDate;
+
+// Member now tracks individual contributions and supports status management
+public class Member implements StatusTrackable {
     private String id;
     private String name;
-    private double totalContributed;
+    private List<Contribution> contributions; // List of all contributions
+    private Status status; // ACTIVE or INACTIVE
 
     public Member(String id, String name) {
         this.id = id;
         this.name = name;
-        this.totalContributed = 0.0;
+        this.contributions = new ArrayList<>();
+        this.status = Status.ACTIVE; // Default to ACTIVE
     }
 
+    // Add a new contribution with the current date
     public void addContribution(double amount) {
-        this.totalContributed += amount;
+        contributions.add(new Contribution(amount, LocalDate.now()));
     }
 
-    public String getDetails() {
-        return "ID: " + id + ", Name: " + name + ", Total Contributed: " + totalContributed;
-    }
-
+    // Get the total contributed by summing all contributions
     public double getTotalContributed() {
-        return totalContributed;
+        double total = 0.0;
+        for (Contribution c : contributions) {
+            total += c.getAmount();
+        }
+        return total;
+    }
+
+    // Get all contributions for display or processing
+    public List<Contribution> getContributions() {
+        return contributions;
     }
 
     public String getId() {
@@ -29,5 +42,25 @@ public class Member {
 
     public String getName() {
         return name;
+    }
+
+    // Implement StatusTrackable interface
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    // Show status and total in member display
+    public String getDetails() {
+        return "ID: " + id + ", Name: " + name + ", Total Contributed: " + getTotalContributed() + ", Status: "
+                + status;
+    }
+
+    @Override
+    public String toString() {
+        return id + " - " + name + " (" + status + ")";
     }
 }
